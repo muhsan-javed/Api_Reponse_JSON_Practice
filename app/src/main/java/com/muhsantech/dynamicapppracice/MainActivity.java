@@ -11,6 +11,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.muhsantech.dynamicapppracice.databinding.ActivityMainBinding;
 
 import org.json.JSONArray;
@@ -32,46 +33,79 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://jsonplaceholder.typicode.com/users"; // GET
         ArrayList<String> arrNames = new ArrayList<>();
 
+//        AndroidNetworking.initialize(this);
+//        AndroidNetworking.get(url)
+//                .setPriority(Priority.HIGH)
+//                .build()
+//                .getAsJSONArray(new JSONArrayRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//
+//                        Log.d("RES", response.toString());
+//
+//                        //paring
+//
+//                        try {
+//
+//                            for (int i = 0; i < response.length(); i++) {
+//                                JSONObject objResult = response.getJSONObject(i);
+//                                String name = objResult.getString("name");
+//                                String username = objResult.getString("username");
+//
+//                                arrNames.add(name + "  " + username);
+//
+//                                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, arrNames);
+//
+//                                binding.listNameView.setAdapter(arrayAdapter);
+//                            }
+//
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        anError.printStackTrace();
+//                        Log.e("ERROR", anError.toString());
+//                    }
+//                });
+
+
+
         AndroidNetworking.initialize(this);
-        AndroidNetworking.get(url)
+        AndroidNetworking.post("https://wscubetech.org/android-course/get-data.php")
+                .addBodyParameter("course_id", "1")
                 .setPriority(Priority.HIGH)
                 .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
+                .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
-                    public void onResponse(JSONArray response) {
-
-                        Log.d("RES", response.toString());
-
-                        //paring
+                    public void onResponse(JSONObject response) {
+                        Log.d("res", response.toString());
 
                         try {
+                            JSONObject objData = response.getJSONObject("data");
+                            String name = objData.getString("name");
 
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject objResult = response.getJSONObject(i);
-                                String name = objResult.getString("name");
-                                String username = objResult.getString("username");
+                            Log.d("Name", name);
 
-                                arrNames.add(name + "  " + username);
+                            JSONObject objDes = objData.getJSONObject("description");
+                            String extension = objDes.getString("extension");
 
-                                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, arrNames);
-
-                                binding.listNameView.setAdapter(arrayAdapter);
-                            }
-
+                            Log.d("Ext", extension);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
                     }
 
                     @Override
                     public void onError(ANError anError) {
                         anError.printStackTrace();
-                        Log.e("ERROR", anError.toString());
                     }
                 });
-
     }
 }
